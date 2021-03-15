@@ -39,15 +39,22 @@ public class Les12 {
 
         Thread t1 = new Thread(() -> transformArray(0, a1));
         Thread t2 = new Thread(() -> transformArray(HALF, a2));
-        t1.start();
-        t2.start();
-        t1.join();
-        t2.join();
 
-        System.arraycopy(a1, 0, arr, 0, HALF);
-        System.arraycopy(a2, 0, arr, HALF, HALF);
-        System.out.println("Время выполнения в двух потоках: " + (System.currentTimeMillis() - start));
-        printArrayInfo(arr);
+
+        new Thread(() -> {
+            t1.start();
+            t2.start();
+            try {
+                t1.join();
+                t2.join();
+                System.arraycopy(a1, 0, arr, 0, HALF);
+                System.arraycopy(a2, 0, arr, HALF, HALF);
+                System.out.println("Время выполнения в двух потоках: " + (System.currentTimeMillis() - start));
+                printArrayInfo(arr);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     public static void transformArray(int delta, float array[]) {
